@@ -1,0 +1,9 @@
+c:\users\ogrizkoi\documents\visual studio 2015\Projects\2048_WF\2048_WF\bin\Debug\2048_WF.exe.config
+c:\users\ogrizkoi\documents\visual studio 2015\Projects\2048_WF\2048_WF\bin\Debug\2048_WF.exe
+c:\users\ogrizkoi\documents\visual studio 2015\Projects\2048_WF\2048_WF\bin\Debug\2048_WF.pdb
+c:\users\ogrizkoi\documents\visual studio 2015\Projects\2048_WF\2048_WF\obj\Debug\2048_WF.csprojResolveAssemblyReference.cache
+c:\users\ogrizkoi\documents\visual studio 2015\Projects\2048_WF\2048_WF\obj\Debug\_2048_WF.Properties.Resources.resources
+c:\users\ogrizkoi\documents\visual studio 2015\Projects\2048_WF\2048_WF\obj\Debug\2048_WF.csproj.GenerateResource.Cache
+c:\users\ogrizkoi\documents\visual studio 2015\Projects\2048_WF\2048_WF\obj\Debug\2048_WF.exe
+c:\users\ogrizkoi\documents\visual studio 2015\Projects\2048_WF\2048_WF\obj\Debug\2048_WF.pdb
+c:\users\ogrizkoi\documents\visual studio 2015\Projects\2048_WF\2048_WF\obj\Debug\_2048_WF.MainForm.resources
