@@ -5,8 +5,7 @@ using System.Windows.Forms;
 class game_2048 : Form
 {
   // TO DO
-  // 1) Вынести логику движения в сторону в отдельный метод и добавить параметр направления движения через перечисление
-  // 2) Добавить цвета
+  // 2) Добавить изменение цвета и размера чисел
   // 3) Добавить спецэффекты
   // 4) Правила: После каждого такого хода на случайной пустой клетке появляется новая плитка номинала «2» (с вероятностью 90%) или «4» (с вероятностью 10%).
   // 5) Сохранение и возможность возврата на предыдущий ход
@@ -25,6 +24,7 @@ class game_2048 : Form
     Application.Run(new game_2048());
   }
 
+
   public game_2048()
   {
     Text = "2048";
@@ -37,6 +37,7 @@ class game_2048 : Form
     ArrayInitializer();
   }
 
+
   void ArrayInitializer()
   {
     for (int i = 0; i < size; i++)
@@ -46,6 +47,7 @@ class game_2048 : Form
     InitNewCell();
     InitNewCell();
   }
+
 
   void InitNewCell()
   {
@@ -71,11 +73,11 @@ class game_2048 : Form
     arr[cellNum % size, cellNum / size] = num;
   }
 
+
   protected override void OnKeyUp(KeyEventArgs e)
   {
     if (e.KeyCode == Keys.Left)
     {
-
       for (int y = 0; y < size; y++)
         for (int x = 1; x < size; x++)
         {
@@ -99,10 +101,93 @@ class game_2048 : Form
             i--;
           }
         }
+      InitNewCell();
+      Invalidate();
     }
+    else if (e.KeyCode == Keys.Right)
+    {
+      for (int y = 0; y < size; y++)
+        for (int x = size - 2; x >= 0; x--)
+        {
+          int i = x;
+          while ((i < size - 1) && (arr[i, y] != 0))
+          {
+            if (arr[i + 1, y] == 0)
+            {
+              arr[i + 1, y] = arr[i, y];
+              arr[i, y] = 0;
+            }
+            else if (arr[i + 1, y] == arr[i, y])
+            {
+              arr[i + 1, y] = arr[i + 1, y] + arr[i, y];
+              arr[i, y] = 0;
+              break;
+            }
+            else
+              break;
 
-    InitNewCell();
-    Invalidate();
+            i++;
+          }
+        }
+      InitNewCell();
+      Invalidate();
+    }
+    else if (e.KeyCode == Keys.Up)
+    {
+      for (int x = 0; x < size; x++)
+        for (int y = 1; y < size; y++)
+        {
+          int i = y;
+          while ((i > 0) && (arr[x, i] != 0))
+          {
+            if (arr[x, i - 1] == 0)
+            {
+              arr[x, i - 1] = arr[x, i];
+              arr[x, i] = 0;
+            }
+            else if (arr[x, i - 1] == arr[x, i])
+            {
+              arr[x, i - 1] = arr[x, i - 1] + arr[x, i];
+              arr[x, i] = 0;
+              break;
+            }
+            else
+              break;
+
+            i--;
+          }
+        }
+      InitNewCell();
+      Invalidate();
+    }
+    else if (e.KeyCode == Keys.Down)
+    {
+      for (int x = 0; x < size; x++)
+        for (int y = size - 2; y >= 0; y--)
+        {
+          int i = y;
+          while ((i < size - 1) && (arr[x, i] != 0))
+          {
+            if (arr[x, i + 1] == 0)
+            {
+              arr[x, i + 1] = arr[x, i];
+              arr[x, i] = 0;
+            }
+            else if (arr[x, i + 1] == arr[x, i])
+            {
+              arr[x, i + 1] = arr[x, i + 1] + arr[x, i];
+              arr[x, i] = 0;
+              break;
+            }
+            else
+              break;
+
+            i++;
+          }
+        }
+      InitNewCell();
+      Invalidate();
+    }
   }
 
   protected override void OnPaint(PaintEventArgs e)
