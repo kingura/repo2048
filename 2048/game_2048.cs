@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Threading;
 
 class game_2048 : Form
 {
@@ -8,6 +9,8 @@ class game_2048 : Form
   // 1) Не двигать в сторону, если ни одной ячейке нет места для движения
   // 2) Добавить изменение цвета и размера чисел
   // 3) Добавить спецэффекты
+  //      - перерисовывать не всю форму, а только где ченить менялось, иначе блымает. А лучше не перерисовывать,
+  //        а только двигать и рисовать появление, а перерисовка только при перемещении
   // 4) Правила: После каждого такого хода на случайной пустой клетке появляется новая плитка номинала «2» (с вероятностью 90%) или «4» (с вероятностью 10%).
   // 5) Сохранение и возможность возврата на предыдущий ход
 
@@ -72,6 +75,9 @@ class game_2048 : Form
 
     int num = rand.Next(1, 3) * multiplier;
     arr[cellNum % size, cellNum / size] = num;
+
+    // прорисовка появления ячейки
+    AppearanceAnimation(cellNum % size, cellNum / size);
   }
 
 
@@ -102,8 +108,6 @@ class game_2048 : Form
             i--;
           }
         }
-      InitNewCell();
-      Invalidate();
     }
     else if (e.KeyCode == Keys.Right)
     {
@@ -130,8 +134,6 @@ class game_2048 : Form
             i++;
           }
         }
-      InitNewCell();
-      Invalidate();
     }
     else if (e.KeyCode == Keys.Up)
     {
@@ -158,8 +160,6 @@ class game_2048 : Form
             i--;
           }
         }
-      InitNewCell();
-      Invalidate();
     }
     else if (e.KeyCode == Keys.Down)
     {
@@ -186,8 +186,54 @@ class game_2048 : Form
             i++;
           }
         }
+    }
+
+    if (e.KeyCode == Keys.Left || e.KeyCode == Keys.Right || e.KeyCode == Keys.Up || e.KeyCode == Keys.Down)
+    {
+      this.Refresh();
       InitNewCell();
       Invalidate();
+    }
+  }
+
+  void AppearanceAnimation(int x, int y)
+  {
+    Graphics grfx = CreateGraphics();
+    Brush txtBrush = new SolidBrush(Color.White);
+    Brush backBrush = new SolidBrush(Color.LightGray);
+    Font font;
+
+    StringFormat strfmt = new StringFormat();
+    strfmt.LineAlignment = strfmt.Alignment = StringAlignment.Center;
+
+    // Рисуем маленький -> средний -> большой -> средний квадратики
+
+    // очистка
+    grfx.FillRectangle(new SolidBrush(BackColor), new Rectangle(x * cellSize, y * cellSize, cellSize, cellSize));
+
+    int factor;
+    for (int i = -6; i <= 2; i++)
+    {
+      factor = Math.Abs(i) - 1;
+
+      // очистка при рисовании фигуры меньше предыдущей
+      if (i > 0)
+        grfx.FillRectangle(new SolidBrush(BackColor),
+                           new Rectangle(x * cellSize - borderSize, y * cellSize - borderSize,
+                                         cellSize + 2 * borderSize, cellSize + 2 * borderSize));
+
+      // квадрат
+      grfx.FillRectangle(backBrush,
+                         new Rectangle((x * cellSize) + borderSize * factor,
+                                       (y * cellSize) + borderSize * factor,
+                                       cellSize - 2 * borderSize * factor,
+                                       cellSize - 2 * borderSize * factor));
+      // цифра
+      font = new Font(Font.FontFamily, fontSize + borderSize * (1 - factor));
+      grfx.DrawString(arr[x, y].ToString(), font, txtBrush,
+          new Rectangle(x * cellSize, y * cellSize, cellSize, cellSize), strfmt);
+
+      Thread.Sleep(30);
     }
   }
 
