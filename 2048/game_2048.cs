@@ -11,8 +11,8 @@ class game_2048 : Form
   // 3) Добавить спецэффекты
   //      - перерисовывать не всю форму, а только где ченить менялось, иначе блымает. А лучше не перерисовывать,
   //        а только двигать и рисовать появление, а перерисовка только при перемещении
-  // 4) Правила: После каждого такого хода на случайной пустой клетке появляется новая плитка номинала «2» (с вероятностью 90%) или «4» (с вероятностью 10%).
-  // 5) Сохранение и возможность возврата на предыдущий ход
+  // 4) Сохранение и возможность возврата на предыдущий ход
+  // 5) Баг: складывается два раза если есть например: 16 2 2 4 -> 16 8 0 0
 
   const int size = 4;
   const int fontSize = 24;
@@ -64,16 +64,20 @@ class game_2048 : Form
     {
       MessageBox.Show("Игра окончена!\nНет свободных ячеек.");
       Close();
+      return;
     }
 
     // Заполняем случайную непустую ячейку новым значением
     int cellNum;
     cellNum = rand.Next(arr.Length);
 
+
     while (arr[cellNum % size, cellNum / size] != 0)
       cellNum = rand.Next(arr.Length);
 
-    int num = rand.Next(1, 3) * multiplier;
+    // После каждого такого хода на случайной пустой клетке появляется новая плитка номинала «2» (с вероятностью 90%) или «4» (с вероятностью 10%)
+    int rand_val = (rand.Next(1, 11) == 1) ? 2 : 1;
+    int num = rand_val * multiplier;
     arr[cellNum % size, cellNum / size] = num;
 
     // прорисовка появления ячейки
@@ -233,7 +237,7 @@ class game_2048 : Form
       grfx.DrawString(arr[x, y].ToString(), font, txtBrush,
           new Rectangle(x * cellSize, y * cellSize, cellSize, cellSize), strfmt);
 
-      Thread.Sleep(30);
+      Thread.Sleep(20);
     }
   }
 
