@@ -3,22 +3,39 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Threading;
 
-class game_2048 : Form
+internal class game_2048 : Form
 {
   // TO DO
   // 1) Не двигать в сторону, если ни одной ячейке нет места для движения
-  // 2) Добавить изменение цвета и размера чисел
-  // 3) Добавить спецэффекты
+  // 2) Добавить спецэффекты
   //      - перерисовывать не всю форму, а только где ченить менялось, иначе блымает. А лучше не перерисовывать,
   //        а только двигать и рисовать появление, а перерисовка только при перемещении
-  // 4) Сохранение и возможность возврата на предыдущий ход
-  // 5) Баг: складывается два раза если есть например: 16 2 2 4 -> 16 8 0 0
+  // 3) Сохранение и возможность возврата на предыдущий ход
+  // 4) Баг: складывается два раза если есть например: 16 2 2 4 -> 16 8 0 0
+  // 5) Определить финальное сообщение
+  // 6) Определять размеры цифр при увеличении номеров
 
-  const int size = 4;
-  const int fontSize = 24;
-  const int cellSize = 50;
-  const int borderSize = 2;
-  const int multiplier = 2;
+  private const int size = 4;
+  private const int fontSize = 24;
+  private const int cellSize = 50;
+  private const int borderSize = 2;
+  private const int multiplier = 2;
+
+  private readonly Color[] aColors =
+  {
+       /*0*/ Color.DarkGray,
+       /*2*/ Color.Linen,
+       /*4*/ Color.Bisque,
+       /*8*/ Color.Coral,
+      /*16*/ Color.Chocolate,
+      /*32*/ Color.Brown,
+      /*64*/ Color.DarkRed,
+     /*128*/ Color.LightYellow,
+     /*256*/ Color.GreenYellow,
+     /*512*/ Color.Yellow,
+    /*1024*/ Color.Orange,
+    /*2048*/ Color.DarkOrange
+  };
 
   int[,] arr = new int[size, size];
   Random rand = new Random();
@@ -32,7 +49,7 @@ class game_2048 : Form
   public game_2048()
   {
     Text = "2048";
-    BackColor = SystemColors.Window;
+    BackColor = Color.Gray; //SystemColors.Window;
     ForeColor = SystemColors.WindowText;
     //MaximizeBox = false;
     FormBorderStyle = FormBorderStyle.FixedSingle;
@@ -203,8 +220,8 @@ class game_2048 : Form
   void AppearanceAnimation(int x, int y)
   {
     Graphics grfx = CreateGraphics();
-    Brush txtBrush = new SolidBrush(Color.White);
-    Brush backBrush = new SolidBrush(Color.LightGray);
+    Brush txtBrush = new SolidBrush(BackColor);
+    Brush backBrush = new SolidBrush(GetColor(arr[x, y]));
     Font font;
 
     StringFormat strfmt = new StringFormat();
@@ -241,11 +258,23 @@ class game_2048 : Form
     }
   }
 
+  private Color GetColor(int num)
+  {
+    if (num == 0)
+      return aColors[0];
+
+    int i = 1;
+    while (Math.Pow(multiplier, i) != num)
+      i++;
+
+    return aColors[i];
+  }
+
   protected override void OnPaint(PaintEventArgs e)
   {
     Graphics grfx = e.Graphics;
-    Brush txtBrush = new SolidBrush(Color.White);
-    Brush backBrush = new SolidBrush(Color.LightGray);
+    Brush txtBrush = new SolidBrush(BackColor);
+    Brush backBrush;// = new SolidBrush(Color.LightGray);
     Font font = new Font(Font.FontFamily, fontSize);
 
     StringFormat strfmt = new StringFormat();
@@ -254,6 +283,8 @@ class game_2048 : Form
     for (int i = 0; i < size; i++)
       for (int j = 0; j < size; j++)
       {
+        backBrush = new SolidBrush(GetColor(arr[i, j]));
+
         grfx.FillRectangle(backBrush, new Rectangle((i * cellSize) + borderSize, (j * cellSize) + borderSize,
                                                     cellSize - 2 * borderSize, cellSize - 2 * borderSize));
         if (arr[i, j] != 0)
