@@ -12,8 +12,10 @@ internal class game_2048 : Form
   //        а только двигать и рисовать появление, а перерисовка только при перемещении
   // 3) Сохранение и возможность возврата на предыдущий ход
   // 4) Баг: складывается два раза если есть например: 16 2 2 4 -> 16 8 0 0
-  // 5) Определить финальное сообщение
-  // 6) Определять размеры цифр при увеличении номеров
+  // 5) Определить финальное победное событие и сообщение
+  // 6) Проверка на конец игры должна быть в конце метода, сразу после появления новой ячейки,
+  //    типа если рядом есть две одинаковые, то ок, а нет то не ок:)
+  // 7) взять цвета со скриншота этой, пипеткой
 
   private const int size = 4;
   private const int fontSize = 24;
@@ -258,16 +260,28 @@ internal class game_2048 : Form
     }
   }
 
-  private Color GetColor(int num)
+  private Color GetColor(int number)
   {
-    if (num == 0)
+    if (number == 0)
       return aColors[0];
 
     int i = 1;
-    while (Math.Pow(multiplier, i) != num)
+    while (Math.Pow(multiplier, i) != number)
       i++;
 
     return aColors[i];
+  }
+
+  Font GetFontWithOptimalSize(Graphics grfx, int number)
+  {
+    float fSize = fontSize;
+    Font font = new Font(Font.FontFamily, fSize);
+    while (grfx.MeasureString(number.ToString(), font).Width > cellSize)
+    {
+      fSize--;
+      font = new Font(Font.FontFamily, fSize);
+    }
+    return font;
   }
 
   protected override void OnPaint(PaintEventArgs e)
@@ -275,7 +289,7 @@ internal class game_2048 : Form
     Graphics grfx = e.Graphics;
     Brush txtBrush = new SolidBrush(BackColor);
     Brush backBrush;// = new SolidBrush(Color.LightGray);
-    Font font = new Font(Font.FontFamily, fontSize);
+    Font font;// = new Font(Font.FontFamily, fontSize);
 
     StringFormat strfmt = new StringFormat();
     strfmt.LineAlignment = strfmt.Alignment = StringAlignment.Center;
@@ -284,6 +298,7 @@ internal class game_2048 : Form
       for (int j = 0; j < size; j++)
       {
         backBrush = new SolidBrush(GetColor(arr[i, j]));
+        font = GetFontWithOptimalSize(grfx, arr[i, j]);
 
         grfx.FillRectangle(backBrush, new Rectangle((i * cellSize) + borderSize, (j * cellSize) + borderSize,
                                                     cellSize - 2 * borderSize, cellSize - 2 * borderSize));
