@@ -50,6 +50,11 @@ internal class game_2048 : Form
 
   public game_2048()
   {
+    SetStyle(ControlStyles.OptimizedDoubleBuffer |
+             ControlStyles.AllPaintingInWmPaint |
+             ControlStyles.UserPaint, true);
+    UpdateStyles();
+
     Text = "2048";
     BackColor = Color.Gray; //SystemColors.Window;
     ForeColor = SystemColors.WindowText;
